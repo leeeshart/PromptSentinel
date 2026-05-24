@@ -9,14 +9,14 @@
 <br>
 
 <div align="center">
-<img src="https://img.shields.io/badge/status-research%20in%20progress-ffc0cb?style=flat-square">
-<img src="https://img.shields.io/badge/focus-LLM%20Security-ffc0cb?style=flat-square">
-<img src="https://img.shields.io/badge/version-v4-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/STATUS-Research%20in%20Progress-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/FOCUS-LLM%20Security-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/VERSION-v4-ffc0cb?style=flat-square">
 </div>
 
 ---
 
-## What this project is about
+## What this project is about?
 
 When someone tries to trick an AI into saying something harmful, they rarely  
 ask directly. They wrap the request in a story, pretend to be a different AI,  
@@ -93,6 +93,6 @@ MIT — see LICENSE file. Free to use and build on, with credit.
 
 ## Contact
 
-[<img src="https://img.shields.io/badge/email-leeshamogha7@gmail.com-ffc0cb?style=flat-square&logo=gmail&logoColor=white" alt="email badge">](mailto:leeshamogha7@gmail.com)
+[<img src="https://img.shields.io/badge/EMAIL-leeshamogha7@gmail.com-ffc0cb?style=flat-square&logo=gmail&logoColor=white" alt="email badge">](mailto:leeshamogha7@gmail.com)
 
-[<img src="https://img.shields.io/badge/linkedin-leeshamogha-ffc0cb?style=flat-square&logo=linkedin&logoColor=white" alt="linkedin badge">](https://www.linkedin.com/in/leeshamogha)
+[<img src="https://img.shields.io/badge/LINKEDIN-leeshamogha-ffc0cb?style=flat-square&logo=linkedin&logoColor=white" alt="linkedin badge">](https://www.linkedin.com/in/leeshamogha)
