@@ -1,19 +1,17 @@
-<div align="center">
-
 # PromptSentinel
 
 > Investigating why powerful AI models fail at detecting harmful prompts,
 > and what actually fixes it.
 
-<img src="https://img.shields.io/badge/status-research%20in%20progress-ff69b4?style=flat-square">
-<img src="https://img.shields.io/badge/focus-LLM%20Security-ffb6c1?style=flat-square">
-<img src="https://img.shields.io/badge/version-v4-ffc0cb?style=flat-square">
-
-<br>
-
 **Author:** Leesha Mogha  
 **Institution:** IMS Ghaziabad (University Course Campus)
 
+<br>
+
+<div align="center">
+<img src="https://img.shields.io/badge/status-research%20in%20progress-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/focus-LLM%20Security-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/version-v4-ffc0cb?style=flat-square">
 </div>
 
 ---
