@@ -28,7 +28,7 @@ PromptSentinel investigates what happens when you fix that.
 Across six completed notebooks, the central finding is this:
 
 > **The bottleneck in prompt safety classification is not model complexity.
-> It is the distribution of the safe class in training data.**
+> Results suggest that safe-class distribution mismatch is a dominant contributor to classifier failure on human-written attacks.**
 
 A classifier trained on 110k prompts — 18x larger and nearly balanced —
 still fails on human-written jailbreaks, not because it misses harmful vocabulary,
