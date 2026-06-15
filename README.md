@@ -20,7 +20,7 @@
 
 ## what this is
 
-This project started as a question left unanswered by v3 of my Prompt-Safety-Classifier:
+This project started as a question left unanswered by v3 of my [Prompt-Safety-Classifier](https://github.com/leeeshart/Prompt-Safety-Classifier):
 a more powerful transformer model performed *worse* than a simple TF-IDF baseline —
 not because the model was bad, but because it was trained on the wrong kind of data.
 
