@@ -21,8 +21,7 @@
 ## what this is
 
 This project started as a question left unanswered by v3 of my [Prompt-Safety-Classifier](https://github.com/leeeshart/Prompt-Safety-Classifier):
-a more powerful transformer model performed *worse* than a simple TF-IDF baseline —
-not because the model was bad, but because it was trained on the wrong kind of data.
+a more powerful transformer model performed *worse* than a simple TF-IDF baseline. the model was not bad, but it was trained on the wrong kind of data.
 
 PromptSentinel investigates what happens when you fix that.
 Across six completed notebooks, the central finding is this:
@@ -30,7 +29,7 @@ Across six completed notebooks, the central finding is this:
 > **The bottleneck in prompt safety classification is not model complexity.
 > Results suggest that safe-class distribution mismatch is a dominant contributor to classifier failure on human-written attacks.**
 
-A classifier trained on 110k prompts — 18x larger and nearly balanced —
+A classifier trained on 110k prompts, 18x larger and nearly balanced
 still fails on human-written jailbreaks, not because it misses harmful vocabulary,
 but because it has never seen what real benign user behavior looks like.
 
