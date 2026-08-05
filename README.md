@@ -1,7 +1,7 @@
 # PromptSentinel
 
 > Investigating why prompt safety classifiers fail on human-written attacks,
-> and what the data — not the model — is actually responsible for.
+> and what the data (not the model) is actually responsible for.
 
 **Author:** Leesha Mogha  
 **Institution:** IMS Ghaziabad (University Course Campus)  
