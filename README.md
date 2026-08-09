@@ -10,7 +10,7 @@
 <br>
 
 <div align="center">
-<img src="https://img.shields.io/badge/STATUS-Paper%20In%20Progress-ffc0cb?style=flat-square">
+<img src="https://img.shields.io/badge/STATUS-Peer%20Reviewing-ffc0cb?style=flat-square">
 <img src="https://img.shields.io/badge/FOCUS-LLM%20Security-ffc0cb?style=flat-square">
 <img src="https://img.shields.io/badge/VERSION-v4-ffc0cb?style=flat-square">
 <img src="https://img.shields.io/badge/NOTEBOOKS-6%20Complete-ffc0cb?style=flat-square">
