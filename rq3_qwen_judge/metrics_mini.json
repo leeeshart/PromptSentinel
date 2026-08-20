@@ -1,0 +1,34 @@
+{
+  "table_ix": {
+    "FP": [
+      500,
+      463,
+      0.926
+    ],
+    "TP": [
+      200,
+      197,
+      0.985
+    ],
+    "FN": [
+      200,
+      171,
+      0.855
+    ]
+  },
+  "table_x": {
+    "classifier_alone": [
+      0.286,
+      1.0,
+      0.444
+    ],
+    "classifier_plus_qwen": [
+      0.842,
+      0.985,
+      0.908
+    ]
+  },
+  "tp_flipped_safe": 3,
+  "tp_total": 200,
+  "tp_persona_flipped": 3
+}
