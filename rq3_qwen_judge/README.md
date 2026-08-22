@@ -21,6 +21,7 @@ errors found in an earlier attempt:
 | `judge_verdicts.csv` | Qwen3.8 one-word verdicts (`prompt_id,verdict`) for the 900-sample. |
 | `audit_predictions_mini.csv` | Full audit trail: `prompt_id, true_label, classifier_pred, judge_pred, judge_raw_output, group`. |
 | `metrics_mini.json` | Computed Table IX / Table X. |
+| `../notebook5b_qwen_judge.ipynb` | Leesha-style Jupyter notebook mirroring `notebook5.ipynb`: reproducible MiniLM classifier, `random_state=42` sampling, verbatim judge prompt, and Table IX/X + qualitative analysis, loading the precomputed `judge_verdicts.csv`. |
 | `RQ3_QWEN_AUDIT.md` | Full audit of the prior (wrong) run, corrected methodology, results, qualitative analysis, and flagged deviations. |
 
 ## Headline results (Qwen3.8 judge)
