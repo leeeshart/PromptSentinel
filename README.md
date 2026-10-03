@@ -182,15 +182,17 @@ constructions, not as a claim that these labels are interchangeable.
 ```bash
 PromptSentinel/
 │
-├── Notebook_1.ipynb       # Dataset preparation & source analysis
-├── Notebook_2.ipynb       # Attack type analysis (RQ1)
-├── notebook3.ipynb        # Long prompt & human-written jailbreak analysis (RQ2)
-├── notebook4.ipynb        # Chunked embedding experiment (RQ2 extended)
-├── notebook5.ipynb        # LLM-as-judge experiment (RQ3)
-├── notebook6.ipynb        # Four-bucket evaluation, original run (RQ4)
-├── notebook6_fix.ipynb     # Four-bucket evaluation, corrected rerun
+├── Notebook_1.ipynb          # Dataset preparation & source analysis
+├── Notebook_2.ipynb          # Attack type analysis (RQ1)
+├── notebook3.ipynb           # Long prompt & human-written jailbreak analysis (RQ2)
+├── notebook4.ipynb           # Chunked embedding experiment (RQ2 extended)
+├── notebook5.ipynb           # LLM-as-judge experiment (RQ3)
+├── notebook6.ipynb           # Four-bucket evaluation, original run (RQ4)
+├── notebook6_fix.ipynb       # Four-bucket evaluation, corrected rerun
 ├── results/
 │   └── nb6_clean_predictions.csv   # Per-prompt predictions (hashed IDs, no prompt text)
+├── .gitignore                # Excludes the combined dataset and local files
+├── LICENSE
 └── README.md
 ```
 
