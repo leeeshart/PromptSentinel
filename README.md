@@ -135,7 +135,7 @@ During a subsequent audit of Notebook 6, I found two problems in the original ev
 2. **Non-random Bucket C.** Bucket C was the first 500 qualifying WildChat prompts in dataset order, not a random
    sample, and it included repeated prompt templates.
 
-The corrected rerun (`notebook6_fixed.py`) removes the A/B prompts from training (matching on normalized text),
+The corrected rerun (`notebook6_fixed.ipynb`) removes the A/B prompts from training (matching on normalized text),
 draws Bucket C as a seeded random sample with repeated openings removed (first 80 characters, normalized),
 and reports confidence intervals. The classifier settings are unchanged. The training set after exclusion is
 109,047 prompts.
@@ -188,7 +188,7 @@ PromptSentinel/
 ├── notebook4.ipynb           # Chunked embedding experiment (RQ2 extended)
 ├── notebook5.ipynb           # LLM-as-judge experiment (RQ3)
 ├── notebook6.ipynb           # Four-bucket evaluation, original run (RQ4)
-├── notebook6_fix.ipynb       # Four-bucket evaluation, corrected rerun
+├── notebook6_fixed.ipynb       # Four-bucket evaluation, corrected rerun
 ├── results/
 │   └── nb6_clean_predictions.csv   # Per-prompt predictions (hashed IDs, no prompt text)
 ├── .gitignore                # Excludes the combined dataset and local files
@@ -208,9 +208,8 @@ PromptSentinel/
 | WildJailbreak (AllenAI) | 261,559 | 100,099 prompts in the training corpus; source of synthetic buckets A and B (500 each, excluded from training in the corrected run) | Jiang et al. (2024) |
 | WildChat (AllenAI) | 500 sampled | Human-derived safe bucket (not part of the training corpus) | Zhao et al. (2024) |
 
-The combined training file, `compressed_data.csv.gz` (columns: `prompt`, `label`, `source`), merges the prompts from
-the datasets above. It is not included in this repository.
 The combined training file, `compressed_data.csv.gz` (about 116k rows; columns `prompt`, `label` ∈ {safe, unsafe}, `source`), merges the prompts from WildJailbreak, TrustAIRLab, ToxicChat and Qualifire. WildChat is not in it. The file is not included in this repository.
+The file is not distributed because the source datasets have their own licenses and access terms.
 
 ---
 
@@ -219,7 +218,7 @@ The combined training file, `compressed_data.csv.gz` (about 116k rows; columns `
 1. Get access to [WildChat](https://huggingface.co/datasets/allenai/WildChat) on Hugging Face (gated) and create an access token.
 2. Put `compressed_data.csv.gz` in the working directory (see above).
 3. Install the dependencies: `pip install datasets pandas scikit-learn huggingface_hub`
-4. Run `notebook6_fixed.py` (written for Google Colab; it reads the token from Colab secrets under the name `Token`, or from the `HF_TOKEN` environment variable elsewhere).
+4. Open `notebook6_fixed.ipynb` in Google Colab and run all cells (it reads the token from Colab secrets under the name `Token`, or from the `HF_TOKEN` environment variable elsewhere).
 
 Settings: TF-IDF with `max_features=10000, ngram_range=(1, 2)`; Logistic Regression with `max_iter=1000, class_weight="balanced"`; seed 42 for bucket sampling.
 Results depend on the dataset versions available when you run it.
