@@ -88,8 +88,7 @@ wrappers around direct requests. The harmful vocabulary is preserved. Real human
 Recall is *higher* on longer prompts (0.72) than shorter ones (0.57), because longer jailbreaks
 contain more harmful vocabulary for TF-IDF to detect. The hard cases are short, creative,
 human-written jailbreaks that use indirect language not present in synthetic training data.
-Switching to sentence embeddings does not close this gap — ruling out vocabulary mismatch
-as the sole explanation and pointing to a training distribution problem.
+Switching to sentence embeddings does not close this gap, suggesting that vocabulary representation alone does not explain the difference and pointing toward a training-distribution contribution.
 
 **RQ3 — A judge fixes precision but collapses recall.**
 llama-3.1-8b-instant correctly reclassifies 94.4% of false positives as safe.
