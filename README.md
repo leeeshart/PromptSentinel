@@ -1,10 +1,11 @@
 # PromptSentinel
 
-> Investigating why prompt safety classifiers fail on human-written attacks,
-> and what the data (not the model) is actually responsible for.
+> Investigating why prompt safety classifiers fail on human-derived prompts,
+> and how much of that failure traces back to the training data rather than the model.
 
 **Author:** Leesha Mogha  
 **Institution:** IMS Ghaziabad (University Course Campus)  
+**Paper:** [PromptSentinel: When Safe Isn't Safe — Distribution Mismatch in Prompt Safety Classification](https://www.researchgate.net/publication/408587852_PromptSentinel_When_Safe_Isn't_Safe_Distribution_Mismatch_in_Prompt_Safety_Classification)  
 **Builds on:** [Prompt-Safety-Classifier](https://github.com/leeeshart/Prompt-Safety-Classifier)
 
 <br>
@@ -18,23 +19,31 @@
 
 ---
 
+> **Note on results.** The four-bucket numbers below (RQ4) come from a corrected rerun of Notebook 6.
+> The paper's Table XI still reports the earlier run and will be updated. The main finding,
+> a false-positive rate of about 2% on synthetic safe prompts versus about 33% on human-derived safe prompts,
+> is the same in both. Details are in [evaluation update](#evaluation-update).
+
+---
+
 ## what this is
 
 This project started as a question left unanswered by v3 of my [Prompt-Safety-Classifier](https://github.com/leeeshart/Prompt-Safety-Classifier):
 a more powerful transformer model performed *worse* than a simple TF-IDF baseline. the model was not bad, but it was trained on the wrong kind of data.
 
 PromptSentinel investigates what happens when you fix that.
-Across six completed notebooks, the central finding is this:
+Across six notebooks, the central finding is this:
 
-> **The bottleneck in prompt safety classification is not model complexity.
-> Results suggest that safe-class distribution mismatch is a dominant contributor to classifier failure on human-written attacks.**
+> **The bottleneck in prompt safety classification appears not to be model complexity.
+> Results suggest that distribution mismatch in the safe class is a major contributor to classifier failure on human-derived prompts.**
 
-A classifier trained on 110k prompts, 18x larger and nearly balanced
-still fails on human-written jailbreaks, not because it misses harmful vocabulary,
-but because it has never seen what real benign user behavior looks like.
+A classifier trained on about 110k prompts, 18x larger and nearly balanced,
+still performs much worse on human-derived prompts. About 91% of its training data is synthetic
+(WildJailbreak), so it has limited exposure to the diversity of benign behavior found in
+naturally occurring user-AI conversations.
 
-The four-bucket evaluation (NB6) directly tests this hypothesis by comparing
-classifier performance across synthetic vs. human-written prompts in both
+The four-bucket evaluation (NB6) tests this hypothesis by comparing
+classifier performance across synthetic and human-derived prompts in both
 the safe and unsafe classes.
 
 ---
@@ -66,6 +75,9 @@ Attack type taxonomy informed by Yu et al. (2023) "Don't Listen To Me."
 
 ## key findings
 
+> RQ1–RQ3 are being re-checked for the same training/evaluation overlap issue described under
+> [evaluation update](#evaluation-update). Their numbers are unchanged for now.
+
 **RQ1 — Attack types generalise when data is synthetic.**
 TF-IDF achieves 0.98 recall across both direct and adversarial attack types from WildJailbreak.
 But this result has an important caveat: WildJailbreak adversarial prompts are machine-generated
@@ -86,16 +98,73 @@ Qualitative analysis shows the judge fails specifically on persona-override atta
 This finding is consistent with Schwinn et al. (2026), who show LLM judges degrade to
 near-random performance in adversarial settings.
 
-**RQ4 — The failure is distributional, not architectural.**
-Four-bucket evaluation across synthetic safe, synthetic unsafe, human safe (WildChat),
-and human unsafe (TrustAIRLab) shows:
-- FP rate jumps from 1.4% on synthetic safe to 33.6% on human safe (24x increase)
-- Recall drops from 97.8% on synthetic unsafe to 37.8% on human unsafe
+**RQ4 — A large synthetic-vs-human gap persists after correcting the evaluation.**
+Four buckets: synthetic safe, synthetic unsafe (both WildJailbreak), human-derived safe (WildChat),
+and human-derived unsafe (TrustAIRLab). Corrected NB6 results:
 
-The classifier works near-perfectly on synthetic data and fails on human data.
-The bottleneck is the safe class: the model learned that elaborate framing equals unsafe,
-because that is what WildJailbreak adversarial prompts look like. Real benign users
-use the same structures for creative writing and roleplay.
+| Bucket | Source | n | Metric | Result | 95% CI |
+|---|---|---:|---|---:|---|
+| A — synthetic safe | WildJailbreak | 500 | False-positive rate | **1.8%** | 0.9–3.4% |
+| B — synthetic unsafe | WildJailbreak | 500 | Recall | **97.8%** | 96.1–98.8% |
+| C — human-derived safe | WildChat | 500 | False-positive rate | **33.4%** | 29.4–37.6% |
+| D — human-derived unsafe | TrustAIRLab | 653 | Recall | **63.6%** (provisional) | not reported yet* |
+
+Intervals are Wilson 95% intervals. The false-positive rate differs by **31.6 percentage points**
+between synthetic safe (A) and human-derived safe (C) prompts.
+
+\*Bucket D contains repeated templates (519 unique openings among 653 prompts), so a plain interval would be too
+narrow. D is provisional until the overlap and template checks are finished.
+
+The classifier performs near ceiling on synthetic prompts and much worse on human-derived prompts.
+Qualitative inspection suggests it has learned to associate elaborate framing (roleplay, fictional setup,
+detailed instructions) with unsafe, a pattern common in WildJailbreak adversarial prompts but also
+present in ordinary creative-writing requests. This is a hypothesis drawn from examples, not a tested mechanism.
+
+**What this does and doesn't show.** The result supports a distribution-mismatch interpretation. It does not by
+itself show that safe-class mismatch is the only or dominant cause: the buckets also differ in topic, prompt length,
+and how labels were assigned (see [bucket labels](#a-note-on-bucket-labels)).
+
+---
+
+## evaluation update
+
+During a subsequent audit of Notebook 6, I found two problems in the original evaluation:
+
+1. **Training/evaluation overlap.** The 1,000 synthetic prompts in Buckets A and B were sampled from the
+   same combined file used to train the classifier, so they were also in the training data.
+2. **Non-random Bucket C.** Bucket C was the first 500 qualifying WildChat prompts in dataset order, not a random
+   sample, and it included repeated prompt templates.
+
+The corrected rerun (`notebook6_fixed.py`) removes the A/B prompts from training (matching on normalized text),
+draws Bucket C as a seeded random sample with repeated openings removed (first 80 characters, normalized),
+and reports confidence intervals. The classifier settings are unchanged. The training set after exclusion is
+109,047 prompts.
+
+| Bucket | Original NB6 run (paper Table XI) | Corrected rerun |
+|---|---:|---:|
+| A — synthetic safe, FP rate | 1.0% | 1.8% |
+| B — synthetic unsafe, recall | 98.0% | 97.8% |
+| C — human-derived safe, FP rate | 32.0% | 33.4% |
+| D — human-derived unsafe, recall | 65.4% | 63.6% (provisional) |
+
+Figures from earlier iterations of this experiment, including those previously listed in this README, are superseded
+by the corrected rerun. The original `notebook6.ipynb` is kept as a record of the first run.
+
+**Still to do:** split D recall by whether prompts share an opening with a training prompt (13.5% of D do),
+use template-aware intervals for D, re-check RQ1–RQ3 for the same overlap, and update the paper.
+
+### a note on bucket labels
+
+The four buckets do not use identical notions of "safe" and "unsafe":
+
+- **WildJailbreak** labels come from how that benchmark was constructed.
+- **WildChat "safe"** means conversations not flagged by the dataset's `toxic` field (an automated moderation label,
+  not human verification), in English, using the first user turn.
+- **TrustAIRLab "unsafe"** means prompts identified as jailbreaks in that dataset, which is not the same as
+  prompts requesting harmful content.
+
+The experiment should be read as a comparison of classifier behavior across prompt distributions and dataset
+constructions, not as a claim that these labels are interchangeable.
 
 ---
 
@@ -106,7 +175,7 @@ use the same structures for creative writing and roleplay.
 | v1 | Basic TF-IDF classifier | Accuracy looked good but missed half of all attacks |
 | v2 | Added pattern detection + sentence embeddings | Best recall (87.1%) — simple model, right data |
 | v3 | Tried a purpose-built transformer model | Failed — trained for prompt injection, not harmful requests |
-| **v4 (this repo)** | Fixes the data problem v3 exposed | Safe class distribution is the dominant failure mode |
+| **v4 (this repo)** | Fixes the data problem v3 exposed | Evidence points to safe-class distribution as a major factor in failure |
 
 ---
 
@@ -115,15 +184,15 @@ use the same structures for creative writing and roleplay.
 ```bash
 PromptSentinel/
 │
-├── notebooks/
-│   ├── Notebook_1.ipynb   # Dataset preparation & source analysis
-│   ├── Notebook_2.ipynb   # Attack type analysis (RQ1)
-│   ├── notebook3.ipynb    # Long prompt & human-written jailbreak analysis (RQ2)
-│   ├── notebook4.ipynb    # Chunked embedding experiment (RQ2 extended)
-│   ├── notebook5.ipynb    # LLM-as-judge experiment (RQ3)
-│   └── notebook6.ipynb    # Four-bucket evaluation (RQ4)
-│
-├── requirements.txt
+├── Notebook_1.ipynb       # Dataset preparation & source analysis
+├── Notebook_2.ipynb       # Attack type analysis (RQ1)
+├── notebook3.ipynb        # Long prompt & human-written jailbreak analysis (RQ2)
+├── notebook4.ipynb        # Chunked embedding experiment (RQ2 extended)
+├── notebook5.ipynb        # LLM-as-judge experiment (RQ3)
+├── notebook6.ipynb        # Four-bucket evaluation, original run (RQ4)
+├── notebook6_fixed.py     # Four-bucket evaluation, corrected rerun
+├── results/
+│   └── nb6_clean_predictions.csv   # Per-prompt predictions (hashed IDs, no prompt text)
 └── README.md
 ```
 
@@ -132,24 +201,51 @@ PromptSentinel/
 ## datasets used
 
 | Dataset | Size | Role | Citation |
-|---|---|---|---|
-| TrustAIRLab in-the-wild-jailbreak | 6,387 | Human-written jailbreaks — held-out test set throughout | TrustAIRLab (2023) |
-| ToxicChat (lmsys) | 5,082 | Real user conversations with toxicity labels | Lin et al. (2023) |
-| Qualifire benchmark | 5,000 | Near-balanced prompt injection benchmark | — |
-| WildJailbreak (AllenAI) | 261,559 | Synthetic direct + adversarial attacks | Jiang et al. (2024) |
-| WildChat (AllenAI) | 500 sampled | Real benign user conversations — human safe bucket | Zhao et al. (2024) |
+|---|---:|---|---|
+| TrustAIRLab in-the-wild-jailbreak | 6,387 | Source of the human-derived unsafe bucket (653 prompts); excluded from NB6 training | TrustAIRLab (2023) |
+| ToxicChat (LMSYS) | 5,082 | Real user-AI conversations; 4,981 in the training corpus | Lin et al. (2023) |
+| Qualifire benchmark | 5,000 | Prompt-injection data; 4,980 in the training corpus | — |
+| WildJailbreak (AllenAI) | 261,559 | 100,099 prompts in the training corpus; source of synthetic buckets A and B (500 each, excluded from training in the corrected run) | Jiang et al. (2024) |
+| WildChat (AllenAI) | 500 sampled | Human-derived safe bucket (not part of the training corpus) | Zhao et al. (2024) |
+
+The combined training file, `compressed_data.csv.gz` (columns: `prompt`, `label`, `source`), merges the prompts from
+the datasets above. It is not included in this repository.
+<!-- TODO: state how this file was built (Notebook 1?) and whether it can be shared under the datasets' licenses. -->
 
 ---
 
-## paper writing direction
+## reproducing the corrected NB6 results
 
-The paper targets IEEE conference format (~8 pages). The core claim:
+1. Get access to [WildChat](https://huggingface.co/datasets/allenai/WildChat) on Hugging Face (gated) and create an access token.
+2. Put `compressed_data.csv.gz` in the working directory (see above).
+3. Install the dependencies: `pip install datasets pandas scikit-learn huggingface_hub`
+4. Run `notebook6_fixed.py` (written for Google Colab; it reads the token from Colab secrets under the name `Token`, or from the `HF_TOKEN` environment variable elsewhere).
 
-> Improving classifier performance on harmful prompt detection requires
-> addressing distributional diversity in the safe class, not increasing
-> model complexity or dataset volume alone.
+Settings: TF-IDF with `max_features=10000, ngram_range=(1, 2)`; Logistic Regression with `max_iter=1000, class_weight="balanced"`; seed 42 for bucket sampling.
+Results depend on the dataset versions available when you run it.
 
-Section order for writing: Dataset → Experiments → Results → Related Work → Introduction → Abstract.
+The notebooks for RQ1–RQ3 have not yet been repackaged for reproduction.
+
+---
+
+## limitations
+
+- "Safe" and "unsafe" mean different things across buckets (see [bucket labels](#a-note-on-bucket-labels)).
+- Buckets are small (500 prompts each for A, B, C), so the synthetic-safe false-positive rate in particular has a wide interval.
+- Human-derived prompts repeat templates; effective sample sizes are smaller than the raw counts, especially for Bucket D.
+- Near-duplicate matching uses a rough proxy (shared first 80 characters), so some paraphrased overlap may remain.
+- The classifier is a TF-IDF + Logistic Regression baseline; conclusions about other model types are not tested here.
+- English-only evaluation; training data is from 2023-era sources.
+- RQ1–RQ3 have not yet been re-audited.
+
+---
+
+## paper
+
+The paper investigates whether improving harmful-prompt classification requires greater distributional diversity
+in the safe class, rather than relying on model complexity or dataset scale alone.
+
+If you use this work, please cite the paper linked at the top of this page.
 
 ---
 
