@@ -84,7 +84,7 @@ TF-IDF achieves 0.98 recall across both direct and adversarial attack types from
 But this result has an important caveat: WildJailbreak adversarial prompts are machine-generated
 wrappers around direct requests. The harmful vocabulary is preserved. Real human jailbreaks are different.
 
-**RQ2 — Length is not the bottleneck. Distribution is.**
+**RQ2 — Length is not the bottleneck. Distribution may be.**
 Recall is *higher* on longer prompts (0.72) than shorter ones (0.57), because longer jailbreaks
 contain more harmful vocabulary for TF-IDF to detect. The hard cases are short, creative,
 human-written jailbreaks that use indirect language not present in synthetic training data.
@@ -113,10 +113,7 @@ and human-derived unsafe (TrustAIRLab). Corrected NB6 results:
 Intervals are Wilson 95% intervals. The false-positive rate differs by **31.6 percentage points**
 between synthetic safe (A) and human-derived safe (C) prompts.
 
-\*Bucket D contains repeated prompt openings (519 unique openings among 653
-prompts), so the effective diversity of the sample may be lower than the raw
-sample size suggests. D is provisional until the overlap and template-dependence
-checks are finished.*
+\*Bucket D contains repeated prompt openings (519 unique openings among 653 prompts), so the effective diversity of the sample may be lower than the raw sample size suggests. Some prompts in D are also jailbreak-style but harmless in content (see [bucket labels](#a-note-on-bucket-labels)). D is provisional until the overlap, template, and label checks are finished.
 
 The classifier performs near ceiling on synthetic prompts and much worse on human-derived prompts.
 Qualitative inspection suggests it has learned to associate elaborate framing (roleplay, fictional setup,
@@ -153,10 +150,7 @@ and reports confidence intervals. The classifier settings are unchanged. The tra
 Figures from earlier iterations of this experiment, including those previously listed in this README, are superseded
 by the corrected rerun. The original `notebook6.ipynb` is kept as a record of the first run.
 
-**Still to do:** split D recall by exact normalized-text overlap with training
-data, and separately examine shared-opening/template overlap (13.5% of D);
-use template-aware intervals for D, re-check RQ1–RQ3 for the same overlap, and
-update the paper.
+**Still to do:** split D recall by shared-opening overlap with the training data (13.5% of D share their first 80 characters with a training prompt); use template-aware intervals for D; manually label a random sample of D as harmful or harmless in content; re-check RQ1–RQ3 for the same overlap; and update the paper.
 
 ### a note on bucket labels
 
@@ -165,8 +159,7 @@ The four buckets do not use identical notions of "safe" and "unsafe":
 - **WildJailbreak** labels come from how that benchmark was constructed.
 - **WildChat "safe"** means conversations not flagged by the dataset's `toxic` field (an automated moderation label,
   not human verification), in English, using the first user turn.
-- **TrustAIRLab "unsafe"** means prompts identified as jailbreaks in that dataset, which is not the same as
-  prompts requesting harmful content.
+- **TrustAIRLab "unsafe"** means prompts collected as jailbreaks in that dataset, which is not the same as prompts requesting harmful content. Some prompts in this bucket are harmless in content (for example, persona or role-play prompts with no harmful request), so recall on this bucket mixes harmful and harmless jailbreak-style prompts. A manual audit of a random sample is planned.
 
 The experiment should be read as a comparison of classifier behavior across prompt distributions and dataset
 constructions, not as a claim that these labels are interchangeable.
@@ -195,7 +188,7 @@ PromptSentinel/
 ├── notebook4.ipynb        # Chunked embedding experiment (RQ2 extended)
 ├── notebook5.ipynb        # LLM-as-judge experiment (RQ3)
 ├── notebook6.ipynb        # Four-bucket evaluation, original run (RQ4)
-├── notebook6_fixed.py     # Four-bucket evaluation, corrected rerun
+├── notebook6_fix.ipynb     # Four-bucket evaluation, corrected rerun
 ├── results/
 │   └── nb6_clean_predictions.csv   # Per-prompt predictions (hashed IDs, no prompt text)
 └── README.md
@@ -215,7 +208,7 @@ PromptSentinel/
 
 The combined training file, `compressed_data.csv.gz` (columns: `prompt`, `label`, `source`), merges the prompts from
 the datasets above. It is not included in this repository.
-<!-- TODO: state how this file was built (Notebook 1?) and whether it can be shared under the datasets' licenses. -->
+The combined training file, `compressed_data.csv.gz` (about 116k rows; columns `prompt`, `label` ∈ {safe, unsafe}, `source`), merges the prompts from WildJailbreak, TrustAIRLab, ToxicChat and Qualifire. WildChat is not in it. The file is not included in this repository.
 
 ---
 
@@ -242,6 +235,7 @@ The notebooks for RQ1–RQ3 have not yet been repackaged for reproduction.
 - The classifier is a TF-IDF + Logistic Regression baseline; conclusions about other model types are not tested here.
 - English-only evaluation; training data is from 2023-era sources.
 - RQ1–RQ3 have not yet been re-audited.
+- Bucket D includes jailbreak-style prompts that are harmless in content, and some prompts in the combined file appear cut off mid-sentence.
 
 ---
 
