@@ -5,7 +5,7 @@
 
 **Author:** Leesha Mogha  
 **Institution:** IMS Ghaziabad (University Course Campus)  
-**Paper:** [PromptSentinel: When Safe Isn't Safe — Distribution Mismatch in Prompt Safety Classification](https://www.researchgate.net/publication/408587852_PromptSentinel_When_Safe_Isn't_Safe_Distribution_Mismatch_in_Prompt_Safety_Classification)  
+**Paper:** [PromptSentinel: When Safe Isn't Safe, Distribution Mismatch in Prompt Safety Classification](https://www.researchgate.net/publication/408587852_PromptSentinel_When_Safe_Isn't_Safe_Distribution_Mismatch_in_Prompt_Safety_Classification)  
 **Builds on:** [Prompt-Safety-Classifier](https://github.com/leeeshart/Prompt-Safety-Classifier)
 
 <br>
@@ -19,10 +19,11 @@
 
 ---
 
-> **Note on results.** The four-bucket numbers below (RQ4) come from a corrected rerun of Notebook 6.
-> The paper's Table XI still reports the earlier run and will be updated. The main finding,
-> a false-positive rate of about 2% on synthetic safe prompts versus about 33% on human-derived safe prompts,
-> is the same in both. Details are in [evaluation update](#evaluation-update).
+> **Note on results.** The four-bucket numbers below (RQ4) come from a corrected
+> rerun of Notebook 6. The paper's Table XI still reports the earlier run and
+> will be updated. The main synthetic-vs-human safe-class contrast remains
+> similar in both runs: false-positive rates are about 2% on synthetic safe
+> prompts versus about 33% on human-derived safe prompts.
 
 ---
 
@@ -112,8 +113,10 @@ and human-derived unsafe (TrustAIRLab). Corrected NB6 results:
 Intervals are Wilson 95% intervals. The false-positive rate differs by **31.6 percentage points**
 between synthetic safe (A) and human-derived safe (C) prompts.
 
-\*Bucket D contains repeated templates (519 unique openings among 653 prompts), so a plain interval would be too
-narrow. D is provisional until the overlap and template checks are finished.
+\*Bucket D contains repeated prompt openings (519 unique openings among 653
+prompts), so the effective diversity of the sample may be lower than the raw
+sample size suggests. D is provisional until the overlap and template-dependence
+checks are finished.*
 
 The classifier performs near ceiling on synthetic prompts and much worse on human-derived prompts.
 Qualitative inspection suggests it has learned to associate elaborate framing (roleplay, fictional setup,
@@ -150,8 +153,10 @@ and reports confidence intervals. The classifier settings are unchanged. The tra
 Figures from earlier iterations of this experiment, including those previously listed in this README, are superseded
 by the corrected rerun. The original `notebook6.ipynb` is kept as a record of the first run.
 
-**Still to do:** split D recall by whether prompts share an opening with a training prompt (13.5% of D do),
-use template-aware intervals for D, re-check RQ1–RQ3 for the same overlap, and update the paper.
+**Still to do:** split D recall by exact normalized-text overlap with training
+data, and separately examine shared-opening/template overlap (13.5% of D);
+use template-aware intervals for D, re-check RQ1–RQ3 for the same overlap, and
+update the paper.
 
 ### a note on bucket labels
 
